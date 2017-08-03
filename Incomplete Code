@@ -1,0 +1,17 @@
+def count_words():
+    z = f.read().split()    
+    return len(z)    
+    
+
+def count_sentences():
+    s = f.read()
+    return s.count(".")
+    
+if __name__ == "__main__" :
+    f = open("versedog.txt", encoding="latin1")
+    count_sentences()
+    print ("Did it get here")
+    print ("\n")
+    f = open("versedog.txt", encoding="latin1")
+    print (count_words())
+    
