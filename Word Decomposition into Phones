@@ -1,0 +1,5 @@
+from urllib.request import urlopen
+
+data = urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b") 
+for line in data: 
+    print (line)
