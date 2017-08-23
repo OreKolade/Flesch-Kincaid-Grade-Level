@@ -1,58 +1,48 @@
 
-  from urllib.request import urlopen
+        ###  Find A way to write into a file from the internet in a way you way : i.e line by line 
 
-#data = urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b")
+"""
+## This just prints out content from the webpage into the IDE
+
+from urllib.request import urlopen
+
+data = urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b") 
+for line in data: 
+    print (line)
+"""
+
+
+"""
+## Using this code to write from the internet
+## will not necessaryly print the text in the desired form.
+## Will also make a new copy of the text 
+##It makes every thing compressed together.
+## I want to print it out line for line from the internet to a text doc.
+
+import urllib.request
+urllib.request.urlretrieve("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b", "//SRVA/Homes$/koladeor/Desktop/Python Folder/Word Decomposition into Phones.txt")
+
+"""
+
+
+from urllib.request import urlopen
+
+data = urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b")
 new_file= open("Word Decomposition into Phones.txt","w")
 
-
-my_dict = {}
-
-with urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b") as f:
-    for line in f:
-        if str(line)[2:5] == ";;;":
-             continue
-        else:
-            items = str(line).split()
-            key, values = items[0], items[1:]
-            key = key[2:]
-            values[-1] = values[-1].replace("\\n'","") #For some reason the last element of the list has "\\n" and '\\n"'
-            values[-1] = values[-1].replace('\\n"',"") #This part of the code removes it.  
-            my_dict[key] = values
-
-with open ("Word Decomposition into Phones.txt" , 'w') as f :
-    for key, value in my_dict.items():
-       f.write ('%s:%s\n' % (key,value))
-
-#^^^^^^ The above creates a dictionary out of the website , writes it into a text file to display
-
-
-"""
-
-my_dict = {}
-
-with open("Word Decomposition into Phones.txt", 'r') as f:
-    for line in f:
-        items = line.split(" ")
-        key, values = items[0], items[1:]
-        my_dict[key] = values
-
-print (my_dict)
-"""
-
-
-"""
 for line in data:
     if str(line)[2:5] == ";;;" :##Starts printing at a specified point 
         continue
     else:
         new_line = str(line).replace(str(line)[0:2],"")#For some reason, whenever I write to a file ,
         new_file.write(new_line + '\n')                #" b' " is written beside every line. This code
-                          #writes the entire file content and removes the unsigthly notation
+                          #writes the entire file content                                                                                   #and removes the unsigthly notation
 
 
                                             ### Next thing will be to write every line after a specifc point into a Dictionary
                                      
- """                                       
+                                        
+
 
 
 
