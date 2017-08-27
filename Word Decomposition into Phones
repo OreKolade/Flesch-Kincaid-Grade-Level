@@ -1,72 +1,91 @@
 from urllib.request import urlopen
-
-#data = urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b")
-new_file= open("Word Decomposition into Phones.txt","w")
+import re
 
 
-my_dict = {}
 
-with urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b") as f:
-    for line in f:
-        if str(line)[2:5] == ";;;":
-             continue
+def makedictionary():
+    #data = urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b")
+    new_file= open("Word Decomposition into Phones.txt","w")
+
+
+    my_dict = {}
+
+    with urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b") as f:
+        for line in f:
+            if str(line)[2:5] == ";;;":
+                 continue
+            else:
+                items = str(line).split()
+                key, values = items[0], items[1:]
+                key = key[2:]
+                values[-1] = values[-1].replace("\\n'","") #For some reason the last element of the list has "\\n" and '\\n"'
+                values[-1] = values[-1].replace('\\n"',"") #This part of the code removes it.  
+                my_dict[key] = values
+                
+    with open ("Word Decomposition into Phones.txt" , 'w') as f :
+        for key, value in my_dict.items():
+           f.write ('%s:%s\n' % (key,value))
+           
+    return my_dict
+                
+def worddecomposition(my_dict):
+    my_list_of_keys = my_dict.keys()
+
+    for elem in my_list_of_keys:
+        if elem[0].isalpha() == True:
+            continue
         else:
-            items = str(line).split()
-            key, values = items[0], items[1:]
-            key = key[2:]
-            values[-1] = values[-1].replace("\\n'","") #For some reason the last element of the list has "\\n" and '\\n"'
-            values[-1] = values[-1].replace('\\n"',"") #This part of the code removes it.  
-            my_dict[key] = values
-            
-my_list = my_dict.keys()
-for elem in my_list:
-    if elem[0].isalpha() == True:
-        print(elem)
-        continue
-    else:
-        elem = elem[0:1]
-        print(elem)
-        continue
+            list(my_list_of_keys).remove(elem)
+            continue
         
+    return list(my_list_of_keys)
 
-with open ("Word Decomposition into Phones.txt" , 'w') as f :
-    for key, value in my_dict.items():
-       f.write ('%s:%s\n' % (key,value))
-
+    #^^^^^^ The above creates a dictionary out of the website , writes it into a text file to display
 
 
+    """
+
+    my_dict = {}
+
+    with open("Word Decomposition into Phones.txt", 'r') as f:
+        for line in f:
+            items = line.split(" ")
+            key, values = items[0], items[1:]
+            my_dict[key] = values
+
+    print (my_dict)
+    """
 
 
-#^^^^^^ The above creates a dictionary out of the website , writes it into a text file to display
+    """
+    for line in data:
+        if str(line)[2:5] == ";;;" :##Starts printing at a specified point 
+            continue
+        else:
+            new_line = str(line).replace(str(line)[0:2],"")#For some reason, whenever I write to a file ,
+            new_file.write(new_line + '\n')                #" b' " is written beside every line. This code
+                              #writes the entire file content and removes the unsigthly notation
 
 
-"""
+                                                ### Next thing will be to write every line after a specifc point into a Dictionary
+                                         
+     """                                       
 
-my_dict = {}
-
-with open("Word Decomposition into Phones.txt", 'r') as f:
-    for line in f:
-        items = line.split(" ")
-        key, values = items[0], items[1:]
-        my_dict[key] = values
-
-print (my_dict)
-"""
-
-
-"""
-for line in data:
-    if str(line)[2:5] == ";;;" :##Starts printing at a specified point 
-        continue
-    else:
-        new_line = str(line).replace(str(line)[0:2],"")#For some reason, whenever I write to a file ,
-        new_file.write(new_line + '\n')                #" b' " is written beside every line. This code
-                          #writes the entire file content and removes the unsigthly notation
+def search_words(my_list):
+    list_of_file= open ("versedog.txt",encoding = "latin-1").read().split()
+    for elem in list_of_file: #Breaks down each word in an incoming text file minto individual words. making it easy to handle 
+        elem = re.sub("[^a-zA-Z]+", "",elem)
+        elem = elem.upper()
+        print (elem)
+    
 
 
-                                            ### Next thing will be to write every line after a specifc point into a Dictionary
-                                     
- """                                       
+
+if __name__ == "__main__":
+    list_of_keys = worddecomposition(makedictionary())
+    search_words(list_of_keys)
+
+
 
 
 
