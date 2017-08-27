@@ -17,10 +17,25 @@ with urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b
             values[-1] = values[-1].replace("\\n'","") #For some reason the last element of the list has "\\n" and '\\n"'
             values[-1] = values[-1].replace('\\n"',"") #This part of the code removes it.  
             my_dict[key] = values
+            
+my_list = my_dict.keys()
+for elem in my_list:
+    if elem[0].isalpha() == True:
+        print(elem)
+        continue
+    else:
+        elem = elem[0:1]
+        print(elem)
+        continue
+        
 
 with open ("Word Decomposition into Phones.txt" , 'w') as f :
     for key, value in my_dict.items():
        f.write ('%s:%s\n' % (key,value))
+
+
+
+
 
 #^^^^^^ The above creates a dictionary out of the website , writes it into a text file to display
 
@@ -52,7 +67,6 @@ for line in data:
                                             ### Next thing will be to write every line after a specifc point into a Dictionary
                                      
  """                                       
-
 
 
 
