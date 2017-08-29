@@ -70,15 +70,40 @@ def worddecomposition(my_dict):
                                                 ### Next thing will be to write every line after a specifc point into a Dictionary
                                          
      """                                       
+#https://stackoverflow.com/questions/1059559/split-strings-with-multiple-delimiters
 
-def search_words(my_list):
-    list_of_file= open ("versedog.txt",encoding = "latin-1").read().split()
+def search_words(list_of_keys):
+    #len_of_list = len(list_of_keys)
+    list_of_file = open("versedog.txt",encoding = "latin-1").read().replace('-'," ").split()# For some reason regex can't deal with "- ", had to force code it with replace method
+    for elem in list_of_file: #Breaks down each word in an incoming text file minto individual words. making it easy to handle 
+        elem = re.sub("[.,;?()]+", "",elem)#Searches and replaces [.,;?()-] in the word with empty space
+        elem = elem.upper()
+
+        #mid_list = len_of_list/2 
+        
+        if elem in list_of_keys :
+            print("This word from the text:-",elem,"is in the dictionary")
+        else:
+            print("This word from the text:-",elem,"isn't in the dictionary")
+
+
+    
+"""
+def search_words(list_of_keys):
+    #len_of_list = len(list_of_keys)
+    list_of_file = open("versedog.txt",encoding = "latin-1").read().split()
     for elem in list_of_file: #Breaks down each word in an incoming text file minto individual words. making it easy to handle 
         elem = re.sub("[^a-zA-Z]+", "",elem)
         elem = elem.upper()
-        print (elem)
-    
 
+        #mid_list = len_of_list/2 
+        
+        if elem in list_of_keys :
+            print("This word from the text:-",elem,"is in the dictionary")
+        else:
+            print("This word from the text:-",elem,"isn't in the dictionary")
+
+"""
 
 
 if __name__ == "__main__":
