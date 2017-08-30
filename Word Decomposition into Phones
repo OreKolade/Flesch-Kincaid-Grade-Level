@@ -27,6 +27,8 @@ def makedictionary():
            f.write ('%s:%s\n' % (key,value))
            
     return my_dict
+
+
                 
 def worddecomposition(my_dict):
     my_list_of_keys = my_dict.keys()
@@ -73,10 +75,11 @@ def worddecomposition(my_dict):
 #https://stackoverflow.com/questions/1059559/split-strings-with-multiple-delimiters
 
 def search_words(list_of_keys):
+    count = 0
     #len_of_list = len(list_of_keys)
     list_of_file = open("versedog.txt",encoding = "latin-1").read().replace('-'," ").split()# For some reason regex can't deal with "- ", had to force code it with replace method
     for elem in list_of_file: #Breaks down each word in an incoming text file minto individual words. making it easy to handle 
-        elem = re.sub("[.,;?()]+", "",elem)#Searches and replaces [.,;?()-] in the word with empty space
+        elem = re.sub('[.",;?!()"]+', "",elem)#Searches and replaces [.,;?()-] in the word with empty space
         elem = elem.upper()
 
         #mid_list = len_of_list/2 
@@ -87,7 +90,79 @@ def search_words(list_of_keys):
             print("This word from the text:-",elem,"isn't in the dictionary")
 
 
+def countvowels(elem,my_dicts):
+    print
+
+
+def vowels_on_internet():
+    new_file= open("Vowel Visualization.txt","w")
+    vowel_dict = {}
+
+    with urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b.phones") as f:
+        for line in f:
+             items = str(line).split("\\t")
+             #print (items)
+             key, values = items[0], items[1]
+             key = key[2:]
+             values = values.replace("\\n'","") #For some reason the last element of the list has "\\n" and '\\n"'
+             print ("This is the key",key,"and this is the value",values)
+             vowel_dict[key] = values
+
     
+    with open ("Vowel Visualization.txt" , 'w') as f :
+        for key, value in vowel_dict.items():
+           f.write ('%s:%s\n' % (key,value))
+         
+
+
+
+
+if __name__ == "__main__":
+    #list_of_keys = worddecomposition(makedictionary())
+    #dict_of_words= makedictionary()
+    #search_words(list_of_keys)
+    vowels_on_internet()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """
 def search_words(list_of_keys):
     #len_of_list = len(list_of_keys)
@@ -104,13 +179,5 @@ def search_words(list_of_keys):
             print("This word from the text:-",elem,"isn't in the dictionary")
 
 """
-
-
-if __name__ == "__main__":
-    list_of_keys = worddecomposition(makedictionary())
-    search_words(list_of_keys)
-
-
-
 
 
