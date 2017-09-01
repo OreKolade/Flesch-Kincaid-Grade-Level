@@ -74,25 +74,25 @@ def worddecomposition(my_dict):
      """                                       
 #https://stackoverflow.com/questions/1059559/split-strings-with-multiple-delimiters
 
-def search_words(list_of_keys):
+def search_words(list_of_keys,entire_dict,vowel_dict): #Here we search each individual word in a given text
     count = 0
     #len_of_list = len(list_of_keys)
     list_of_file = open("versedog.txt",encoding = "latin-1").read().replace('-'," ").split()# For some reason regex can't deal with "- ", had to force code it with replace method
     for elem in list_of_file: #Breaks down each word in an incoming text file minto individual words. making it easy to handle 
         elem = re.sub('[.",;?!()"]+', "",elem)#Searches and replaces [.,;?()-] in the word with empty space
         elem = elem.upper()
-
-        #mid_list = len_of_list/2 
         
         if elem in list_of_keys :
-            print("This word from the text:-",elem,"is in the dictionary")
+            print("This word from the text:-",elem,"is in the dictionary and these are it's phones",entire_dict[elem]) #Takes each word and displays it phones
+            for element in entire_dict[elem]:#for each element in the list of values of a given word
+                element = re.sub('[0-9]+', "",element) #removes numbers denoting primary and secondary stress
+                if vowel_dict[element] == "vowel":
+                    count+=1
+            print ("There are",count,"Vowels in this word")
+            count = 0
+                    
         else:
             print("This word from the text:-",elem,"isn't in the dictionary")
-
-
-def countvowels(elem,my_dicts):
-    print
-
 
 def vowels_on_internet():
     new_file= open("Vowel Visualization.txt","w")
@@ -112,16 +112,19 @@ def vowels_on_internet():
     with open ("Vowel Visualization.txt" , 'w') as f :
         for key, value in vowel_dict.items():
            f.write ('%s:%s\n' % (key,value))
-         
 
+    return vowel_dict
+         
+def count_phones(entire_dict,vowel_dict):
+    list_of_keys = worddecomposition(entire_dict)
+    search_words(list_of_keys,entire_dict,vowel_dict)
 
 
 
 if __name__ == "__main__":
     #list_of_keys = worddecomposition(makedictionary())
     #dict_of_words= makedictionary()
-    #search_words(list_of_keys)
-    vowels_on_internet()
+    count_phones(makedictionary(),vowels_on_internet())
 
 
 
