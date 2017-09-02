@@ -76,6 +76,7 @@ def worddecomposition(my_dict):
 
 def search_words(list_of_keys,entire_dict,vowel_dict): #Here we search each individual word in a given text
     count = 0
+    list_reading = 1
     #len_of_list = len(list_of_keys)
     list_of_file = open("versedog.txt",encoding = "latin-1").read().replace('-'," ").split()# For some reason regex can't deal with "- ", had to force code it with replace method
     for elem in list_of_file: #Breaks down each word in an incoming text file minto individual words. making it easy to handle 
@@ -84,9 +85,19 @@ def search_words(list_of_keys,entire_dict,vowel_dict): #Here we search each indi
         
         if elem in list_of_keys :
             print("This word from the text:-",elem,"is in the dictionary and these are it's phones",entire_dict[elem]) #Takes each word and displays it phones
+
             for element in entire_dict[elem]:#for each element in the list of values of a given word
+                list_of_phones = entire_dict[elem]
+                start_point = list_of_phones.index(element)
+                print ("This is the start point",start_point)
                 element = re.sub('[0-9]+', "",element) #removes numbers denoting primary and secondary stress
                 if vowel_dict[element] == "vowel":
+                    print("This is the start",start_point)
+                    print("This is the list reading num",list_reading)
+                    print(list_of_phones[start_point+list_reading])
+
+                    while( list_of_phones.index(list_of_phones[start_point+list_reading]) <= (len(list_of_phones) - 1)  or  (vowel_dict[list_of_phones[start_point+list_reading]]!= "vowel")): 
+                        list_reading += 1  
                     count+=1
             print ("There are",count,"Vowels in this word")
             count = 0
