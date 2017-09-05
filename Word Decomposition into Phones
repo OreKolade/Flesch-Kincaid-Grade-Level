@@ -44,38 +44,11 @@ def worddecomposition(my_dict):
 
     #^^^^^^ The above creates a dictionary out of the website , writes it into a text file to display
 
-
-    """
-
-    my_dict = {}
-
-    with open("Word Decomposition into Phones.txt", 'r') as f:
-        for line in f:
-            items = line.split(" ")
-            key, values = items[0], items[1:]
-            my_dict[key] = values
-
-    print (my_dict)
-    """
-
-
-    """
-    for line in data:
-        if str(line)[2:5] == ";;;" :##Starts printing at a specified point 
-            continue
-        else:
-            new_line = str(line).replace(str(line)[0:2],"")#For some reason, whenever I write to a file ,
-            new_file.write(new_line + '\n')                #" b' " is written beside every line. This code
-                              #writes the entire file content and removes the unsigthly notation
-
-
-                                                ### Next thing will be to write every line after a specifc point into a Dictionary
-                                         
-     """                                       
 #https://stackoverflow.com/questions/1059559/split-strings-with-multiple-delimiters
 
 def search_words(list_of_keys,entire_dict,vowel_dict): #Here we search each individual word in a given text
     count = 0
+    total_vowels = 0
 
     list_of_file = open("versedog.txt",encoding = "latin-1").read().replace('-'," ").split()# For some reason regex can't deal with "- ", had to force code it with replace method
     for elem in list_of_file: #Breaks down each word in an incoming text file minto individual words. making it easy to handle 
@@ -84,29 +57,39 @@ def search_words(list_of_keys,entire_dict,vowel_dict): #Here we search each indi
         
         if elem in list_of_keys :
             print("This word from the text:-",elem,"is in the dictionary and these are it's phones",entire_dict[elem]) #Takes each word and displays it phones
+            list_of_phones = entire_dict[elem]
 
-            for element in entire_dict[elem]:#for each element which is an individual phone in the list of values of a given word
-                list_of_phones = entire_dict[elem]
-                #element = re.sub('[0-9]+', "",element) #removes numbers denoting primary and secondary stress                       
+            
+            while(len(list_of_phones)>0):#for each element which is an individual phone in the list of values of a given word
+                element = list_of_phones[0]
                 if vowel_dict[re.sub('[0-9]+', "",element)] == "vowel" :#Looking into the vowel dictionary requires a modified phone without numbers
-                    print ("List I am looking at right now:",list_of_phones[list_of_phones.index(element):])
-                    if len(list_of_phones[list_of_phones.index(element):]) == 1:
-                        count += 1
-                    else:
-                        for i in list_of_phones[list_of_phones.index(element):]:
-                            if vowel_dict[re.sub('[0-9]+', "",i)] == "vowel":
-                                continue
-                            else:
+                   if len(list_of_phones) == 1:
+                       count += 1
+                       break
+                   else:
+                       for i in list_of_phones[list_of_phones.index(element):]:
+                           if vowel_dict[re.sub('[0-9]+', "",i)] == "vowel":
+                                if list_of_phones.index(i) != (len(list_of_phones)-1):
+                                    continue
+                                else:
+                                    count += 1
+                                    list_of_phones = list_of_phones[list_of_phones.index(i) + 1 :]
+                                    break
+                           else:
+                                list_of_phones = list_of_phones[list_of_phones.index(i):]
                                 count+= 1
-                                break
+                                break                 
                 else:
-                    continue
-    
+                    list_of_phones= list_of_phones[1:]
+                    
+                    
             print ("There are",count,"Vowels in this word")
+            total_vowels += count
             count = 0
                     
         else:
             print("This word from the text:-",elem,"isn't in the dictionary")
+    print("Total Amount of Vowels in the text is:- ",total_vowels)
 
 def vowels_on_internet():
     new_file= open("Vowel Visualization.txt","w")
@@ -119,7 +102,7 @@ def vowels_on_internet():
              key, values = items[0], items[1]
              key = key[2:]
              values = values.replace("\\n'","") #For some reason the last element of the list has "\\n" and '\\n"'
-             print ("This is the key",key,"and this is the value",values)
+             #print ("This is the key",key,"and this is the value",values)
              vowel_dict[key] = values
 
     
