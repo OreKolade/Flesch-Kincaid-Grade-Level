@@ -1,31 +1,158 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 20 21:11:19 2017
 
-@author: OLUSOJI
-"""
+from urllib.request import urlopen
+import re
+
+
 def count_words():
     #z = f.read().split()    
     z = text.split()    
-    return "These are the words in the text:- ", len(z)    
-
-def get_total_sentences(text):
-    text = text.replace("!", ".")
-    text = text.replace("?", ".")
-    sentences = text.split('.')    
-    return len(sentences)
-    
+    return len(z)    
 
 def count_sentences(text):
    text = text.replace("!", ".")
    text = text.replace("?", ".")
-   return "This is the amount of sentences in this text:- ", len(text.split(".")) 
+   return  len(text.split("."))
    
-   
+
+
+
+def makedictionary():
+    #data = urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b")
+    new_file= open("Word Decomposition into Phones.txt","w")
+
+
+    my_dict = {}
+
+    with urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b") as f:
+        for line in f:
+            if str(line)[2:5] == ";;;":
+                 continue
+            else:
+                items = str(line).split()
+                key, values = items[0], items[1:]
+                key = key[2:]
+                values[-1] = values[-1].replace("\\n'","") #For some reason the last element of the list has "\\n" and '\\n"'
+                values[-1] = values[-1].replace('\\n"',"") #This part of the code removes it.  
+                my_dict[key] = values
+                
+    with open ("Word Decomposition into Phones.txt" , 'w') as f :
+        for key, value in my_dict.items():
+           f.write ('%s:%s\n' % (key,value))
+           
+    return my_dict
+
+
+                
+def worddecomposition(my_dict):
+    my_list_of_keys = my_dict.keys()
+
+    for elem in my_list_of_keys:
+        if elem[0].isalpha() == True:
+            continue
+        else:
+            list(my_list_of_keys).remove(elem)
+            continue
+        
+    return list(my_list_of_keys)
+
+    #^^^^^^ The above creates a dictionary out of the website , writes it into a text file to display
+
+#https://stackoverflow.com/questions/1059559/split-strings-with-multiple-delimiters
+
+def search_words(list_of_keys,entire_dict,vowel_dict): #Here we search each individual word in a given text
+    count = 0
+    total_vowels = 0
+
+    list_of_file = open("versedog.txt",encoding = "latin-1").read().replace('-'," ").split()# For some reason regex can't deal with "- ", had to force code it with replace method
+    for elem in list_of_file: #Breaks down each word in an incoming text file minto individual words. making it easy to handle 
+        elem = re.sub('[.",;?!()"]+', "",elem)#Searches and replaces [.,;?()-] in the word with empty space
+        elem = elem.upper()
+        
+        if elem in list_of_keys :
+            #print("This word from the text:-",elem,"is in the dictionary and these are it's phones",entire_dict[elem])  Activate this comment if you want to see  each word and display its phones
+            list_of_phones = entire_dict[elem]
+
+            
+            while(len(list_of_phones)>0):#for each element which is an individual phone in the list of values of a given word
+                element = list_of_phones[0]
+                if vowel_dict[re.sub('[0-9]+', "",element)] == "vowel" :#Looking into the vowel dictionary requires a modified phone without numbers
+                   if len(list_of_phones) == 1:
+                       count += 1
+                       break
+                   else:
+                       for i in list_of_phones[list_of_phones.index(element):]:
+                           if vowel_dict[re.sub('[0-9]+', "",i)] == "vowel":
+                                if list_of_phones.index(i) != (len(list_of_phones)-1):
+                                    continue
+                                else:
+                                    count += 1
+                                    list_of_phones = list_of_phones[list_of_phones.index(i) + 1 :]
+                                    break
+                           else:
+                                list_of_phones = list_of_phones[list_of_phones.index(i):]
+                                count+= 1
+                                break                 
+                else:
+                    list_of_phones= list_of_phones[1:]
+                    
+                    
+            #print ("There are",count,"Vowels in this word") Activate this comment if you want to see the amount of individual vowels in a word
+            total_vowels += count
+            count = 0
+                    
+        else:
+            print("This word from the text:-",elem,"isn't in the dictionary")
+    
+    return total_vowels
+
+def vowels_on_internet():
+    new_file= open("Vowel Visualization.txt","w")
+    vowel_dict = {}
+
+    with urlopen("http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b.phones") as f:
+        for line in f:
+             items = str(line).split("\\t")
+             #print (items)
+             key, values = items[0], items[1]
+             key = key[2:]
+             values = values.replace("\\n'","") #For some reason the last element of the list has "\\n" and '\\n"'
+             #print ("This is the key",key,"and this is the value",values)
+             vowel_dict[key] = values
+
+    
+    with open ("Vowel Visualization.txt" , 'w') as f :
+        for key, value in vowel_dict.items():
+           f.write ('%s:%s\n' % (key,value))
+
+    return vowel_dict
+
+def final_calculation_gradelevel(total_words,total_sentences,total_syllables):
+    part_one = 0.39*(total_words/total_sentences)
+    part_two = 11.8*(total_syllables/total_words)
+    final_calculation = part_one + part_two - 15.59
+    return final_calculation
+
+def final_calculation_readingease(total_words,total_sentences,total_syllables):
+    part_one = 1.015*(total_words/total_sentences)
+    part_two = 84.6*(total_syllables/total_words)
+    final_calculation = 206.835 - part_one - part_two 
+    return final_calculation
+
+def count_phones(entire_dict,vowel_dict):
+    list_of_keys = worddecomposition(entire_dict)
+    num_of_vowels = search_words(list_of_keys,entire_dict,vowel_dict)
+    return  num_of_vowels 
+
 if __name__ == "__main__" :
     text = open("versedog.txt", encoding="latin1").read() #Use this instead of " text = open("versedog.txt", encoding="latin1") ", as you would have to specify .read() under each functions  
-    print (count_sentences(text))
-    print ("Did it get here")
-    print ("\n")
-    print (count_words())
-
+    num_of_sentences = count_sentences(text)
+    print("Number of sentences:-", num_of_sentences)
+    num_of_words = count_words()
+    print("Number of words:-",num_of_words)
+    num_of_all_vowels = count_phones(makedictionary(),vowels_on_internet())
+    print("Total Amount of Vowels in the text is:- ",num_of_all_vowels)
+    grade_level = final_calculation_gradelevel(num_of_words ,num_of_sentences,num_of_all_vowels)
+    print("This is the grade Level of this text:- ", grade_level)
+    reading_ease = final_calculation_readingease(num_of_words ,num_of_sentences,num_of_all_vowels)
+    print("This is the reading ease of this text:- ", reading_ease)
